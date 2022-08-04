@@ -2,17 +2,21 @@
 
 Guessing Random Additive Noise Decoding (GRAND)
 
-Non-parallelized MATLAB implementations of: GRAND (hard detection); basic ORBGRAND (soft detection); 1-line ORBGRAND (soft detection).
-
 Subject to license:
 "GRAND Codebase Non-Commercial Academic Research Use License 021722.pdf"
 
-For an [n,k] code, where k information bits become n coded bits,
+Non-parallelized MATLAB implementations of: GRAND (hard detection); basic ORBGRAND (soft detection); 1-line ORBGRAND (soft detection).
+
+Simulation is setup and run with GRAND_Code/driver_GRAND.m
+
+Sample output is in RESULTS, and sample plots from those results can be made with MAKE_FIGS/driver_sample_figs.m
+
+Note that for an [n,k] code, where k information bits become n coded bits,
 GRAND algorithms accurately and efficiently decode codes where n-k
 is moderate. This MATLAB implementation is solely intended to be
-instructive and highly-parallelised implementations are possible.
-As a result, obtaining the full performance a code with n-k>16 will
-be time-consuming with the present implementation.
+instructive and is not parallelised, even though highly-parallelised implementations are possible.
+As a result, obtaining the full performance of a code with n-k>16 may prove
+time-consuming with the present implementation.
 
 The following should be cited in association with results from this code.
 
