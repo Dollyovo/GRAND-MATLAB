@@ -3,7 +3,6 @@
 Ken R. Duffy, 2018-2022.
 
 Guessing Random Additive Noise Decoding (GRAND)
-For further details see: https://www.granddecoder.mit.edu/
 
 Non-parallelized MATLAB implementations of: GRAND (hard detection); basic ORBGRAND (soft detection); 1-line ORBGRAND (soft detection).
 
@@ -28,3 +27,5 @@ decoding," in IEEE ICASSP, 2021, pp. 8268–8272.
 
 K. R. Duffy, W. An, and M. Medard, "Ordered reliability bits guessing 
 random additive noise decoding,” arXiv:2202.13951, 2022.
+
+For further details on GRAND, see: https://www.granddecoder.mit.edu/
