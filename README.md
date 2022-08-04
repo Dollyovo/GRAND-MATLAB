@@ -8,7 +8,7 @@ For further details see: https://www.granddecoder.mit.edu/
 Non-parallelized MATLAB implementations of: GRAND (hard detection); basic ORBGRAND (soft detection); 1-line ORBGRAND (soft detection).
 
 Subject to license:
-GRAND Codebase Non-Commercial Academic Research Use License 021722.pdf
+"GRAND Codebase Non-Commercial Academic Research Use License 021722.pdf"
 
 For an [n,k] code, where k information bits become n coded bits,
 GRAND algorithms accurately and efficiently decode codes where n-k
