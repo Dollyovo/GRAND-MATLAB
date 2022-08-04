@@ -1,7 +1,5 @@
 # GRAND-MATLAB
 
-Ken R. Duffy, 2018-2022.
-
 Guessing Random Additive Noise Decoding (GRAND)
 
 Non-parallelized MATLAB implementations of: GRAND (hard detection); basic ORBGRAND (soft detection); 1-line ORBGRAND (soft detection).
