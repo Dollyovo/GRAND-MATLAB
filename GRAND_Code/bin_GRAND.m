@@ -1,5 +1,12 @@
 %  GRAND (hard detection - binary symmetric channel)
 
+% Implemented using non-parallelized methods akin to the parallelized ones
+% introduced in the CMOS implementation:
+% A. Riaz, V. Bansal, A. Solomon, W. An, Q. Liu, K. Galligan, 
+% K. R. Duffy, M. Medard and R. T. Yazicigil, "Multi-code multi-rate 
+% universal maximum likelihood decoder using GRAND," Proceedings of 
+% IEEE ESSCIRC, 2021.
+
 % Inputs:
 %   code_class      - CRC, else assumed defined by matrix
 %   n               - code length
