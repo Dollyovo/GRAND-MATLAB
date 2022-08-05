@@ -191,17 +191,14 @@ code.LT = '-.o';
 codes(n_CODES).code = code; 
 
 % Colour code lines
-
 colours = zeros(n_CODES,3);
 colours(:,1) = [1:n_CODES]/(n_CODES);
 colours(:,3) = 1-[1:n_CODES]/(n_CODES);
-
 for ii=1:n_CODES
     codes(ii).code.color = colours(ii,:);
 end
 
-make_fig(codes,4)
-
+make_fig(codes,2)
 
 function make_fig(codes,fig_no)
 
