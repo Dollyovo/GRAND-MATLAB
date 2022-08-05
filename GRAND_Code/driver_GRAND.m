@@ -307,6 +307,10 @@ code.BER = code.num_bit_errs./(code.num_decoded*code.n); % Decoded BER
 code.EG = code.num_queries./code.num_decoded; % Average number of code-book queries
 code.max_query = max_query;
 
+% Code
+code.G=G;
+code.H=H;
+
 save(filename,'code')
 
 disp(['Decoder=' DECODER ', code=' code.class ', ' num2str(sum(num_decoded)) ' packets decoded.'])
