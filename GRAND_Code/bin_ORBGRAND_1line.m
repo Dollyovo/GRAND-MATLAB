@@ -15,12 +15,11 @@
 % K. R. Duffy, “Ordered reliability bits guessing random additive noise 
 % decoding," in IEEE ICASSP, 2021, pp. 8268–8272. 
 % In the degenerate setting where it was always set to one, it would
-% implicitly correspond to the model considered in
+% correspond to the model considered in
 % C. Condo, V. Bioglio, and I. Land, "High-performance low-complexity 
 % error pattern generation for ORBGRAND decoding," in IEEE GLOBECOM, 2021.
 
 % Inputs:
-%   code_class      - CRC, else assumed defined by matrix
 %   n               - code length
 %   H               - Parity check matrix or CRC function
 %   max_query       - Maximum number of code-book queries to abandonment
@@ -32,10 +31,11 @@
 %   n_guesses       - Number of guesses performed
 %   abandoned       - 1 if abandoned, 0 if found a codeword
 
-function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(code_class,n,H,max_query,y_soft)
+function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(H,max_query,y_soft)
 
     % Hard demodulate
     y_demod = (y_soft<0);
+    n=length(y_demod);
 
     n_guesses = 1;
     err_vec = zeros(1,n);
@@ -43,27 +43,12 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(code_class
     %Abandon default values
     y_decoded = -1*ones(size(y_demod));
 
-    % First query is demodulated string
-
-    if isequal(code_class,'CRC')
-        % MATLAB expects codeswords to be columns - H here is a CRC
-        % check function
-        t = mod(y_demod,2);
-        [~,err] = H(mod(t',2));
-        % If no error
-        if ~err
-            y_decoded = t;
-            abandoned = 0;
-            return;
-        end
-    % If not a CRC, assume you have the H matrix
-    else 
-        Hy = mod(H*y_demod',2);
-        if Hy==zeros(size(Hy))
-            y_decoded = y_demod;
-            abandoned = 0;
-            return;
-        end
+    % First query is demodulated string     
+    Hy = mod(H*y_demod',2);
+    if Hy==zeros(size(Hy))
+        y_decoded = y_demod;
+        abandoned = 0;
+        return;
     end
     
     % If the demodulated string is not in the codebook, decode.
@@ -82,85 +67,46 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(code_class
     % Intercept
     c = max(round(L(1)/beta-1),0);
 
-    % If CRC
-    if isequal(code_class,'CRC')
-        % Total starting weight
-        wt=c+1;
-        while n_guesses<max_query && wt<=c*n+n*(n+1)/2
-            % Hamming weight start 
-            w=max(1,ceil(((1+2*(c+n))-sqrt((1+2*(c+n))^2-8*wt))/2));
-            while w<=n
-                % Logistic weight
-                W = wt-c*w;
-                if W<0 || W<w*(w+1)/2
-                    break;
-                else
-                    % Make error vectors
-                    noise_locations = landslide(W,w,n);
-                    % For each error vector
-                    for jj=1:size(noise_locations,1)
-                        n_guesses = n_guesses +1;
-                        err_vec =zeros(1,n);
-                        err_vec(noise_locations(jj,:))=1;
+    % This is the syndrome
+    Hy = mod(H*y_demod',2);
+    % This is the H columns reordered to put in ML order
+    test_H = H(:,ind_order);
+    % Total starting weight
+    wt=c+1;
+    while n_guesses<max_query && wt<=c*n+n*(n+1)/2
+        % Hamming weight
+        w=1;
+        while w<=n
+            % Logistic weight
+            W = wt-c*w;
+            if W<0 || W<w*(w+1)/2
+                break;
+            else
+                % Make error vectors
+                % Internally converts W and n to W' and n'.
+                noise_locations = landslide(W,w,n); 
+                % For each error vector
+                for jj=1:size(noise_locations,1)
+                   n_guesses = n_guesses +1;
+                    err_vec =zeros(1,n);
+                    err_vec(noise_locations(jj,:))=1;
+                    if (Hy == mod(test_H*err_vec',2))
                         err_vec = err_vec(inv_perm);
-                        t = mod(y_demod-err_vec,2);
-                        % MATLAB expects codeswords to be columns. H here is a CRC
-                        % check function
-                        [~,err] = H(mod(t',2));
-                        % If no error
-                        if ~err
-                            y_decoded = t;
-                            abandoned = 0;
-                            return;
-                        end
+                        y_decoded = mod(y_demod-err_vec,2);
+                        abandoned = 0;
+                        return;
                     end
                 end
-                % Increment Hamming weight
-                w=w+1;
             end
-            wt=wt+1;
+            % Increment Hamming weight
+            w=w+1;
         end
-    % If H a matrix we're dealing with a standard linear code
-    elseif ismatrix(H)
-        % This is the syndrome
-        Hy = mod(H*y_demod',2);
-        % This is the H columns reordered to put in ML order
-        test_H = H(:,ind_order);
-        % Total starting weight
-        wt=c+1;
-        while n_guesses<max_query && wt<=c*n+n*(n+1)/2
-            % Hamming weight
-            w=max(1,ceil(((1+2*(c+n))-sqrt((1+2*(c+n))^2-8*wt))/2));
-            while w<=n
-                % Logistic weight
-                W = wt-c*w;
-                if W<0 || W<w*(w+1)/2
-                    break;
-                else
-                    % Make error vectors
-                    % Internally converts W and n to W' and n'.
-                    noise_locations = landslide(W,w,n); 
-                    % For each error vector
-                    for jj=1:size(noise_locations,1)
-                       n_guesses = n_guesses +1;
-                        err_vec =zeros(1,n);
-                        err_vec(noise_locations(jj,:))=1;
-                        if (Hy == mod(test_H*err_vec',2))
-                            err_vec = err_vec(inv_perm);
-                            y_decoded = mod(y_demod-err_vec,2);
-                            abandoned = 0;
-                            return;
-                        end
-                    end
-                end
-                % Increment Hamming weight
-                w=w+1;
-            end
-            wt=wt+1;
-         end
+        wt=wt+1;
     end
+
     % If we max out on queries or total weight
     abandoned = 1;
     err_vec = zeros(size(y_demod));
+
 end
 

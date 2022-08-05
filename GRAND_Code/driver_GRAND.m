@@ -124,10 +124,10 @@ elseif isequal(code_class,'CRC')
     poly=koopman2matlab(hex_poly); % Convert from Koopman notation
     % Record the polynomial
     code.poly = poly;
-    % Set up the CRC check using MATLAB tool.
-    G = comm.CRCGenerator(poly);
-    n = length(G(zeros(k,1)));
-    H = comm.CRCDetector(poly);
+    % Set up the CRC check using MATLAB toolbox
+    [G,H,n] = make_CRC_GH(k,poly);
+    code.G=G;
+    code.H=H;
 end
 
 % Reminder that this implementation is not parallelized and so larger n-k
@@ -180,12 +180,7 @@ for ii=1:length(snr_db)
         % Uniform random information word
         u = binornd(ones(1,k),0.5);
         % Codeword
-        if isequal(code_class,'CRC')
-            c = G(u').'; 
-        % If a linear code described by a generator matrix
-        else
-            c = mod(u*G,2);
-        end
+        c = mod(u*G,2);
 	    % Modulate
 	    modOut = nrSymbolModulate([c mod_pad]',modulation);
         % Add White Gaussian noise
@@ -205,13 +200,13 @@ for ii=1:length(snr_db)
         
         % Decode with GRAND (hard detection)
         if isequal(DECODER,'GRAND')
-            [y_decoded,~,n_guess,abandoned] = bin_GRAND(code_class,n,H,max_query,y_demod); 
+            [y_decoded,~,n_guess,abandoned] = bin_GRAND(H,max_query,y_demod); 
         % Decode with basic ORBGRAND (soft detection)
         elseif isequal(DECODER,'ORBGRAND')
-            [y_decoded,~,n_guess,abandoned] = bin_ORBGRAND(code_class,n,H,max_query,y_soft); 
+            [y_decoded,~,n_guess,abandoned] = bin_ORBGRAND(H,max_query,y_soft); 
         % Decode with 1-line ORBGRAND (soft detection)
         elseif isequal(DECODER,'ORBGRAND1line')
-            [y_decoded,~,n_guess,abandoned] = bin_ORBGRAND_1line(code_class,n,H,max_query,y_soft); 
+            [y_decoded,~,n_guess,abandoned] = bin_ORBGRAND_1line(H,max_query,y_soft); 
         else
             disp('DECODER must be GRAND or ORBGRAND or ORBGRAND1line')
             return;

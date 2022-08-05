@@ -1,14 +1,6 @@
-%  GRAND (hard detection - binary symmetric channel)
-
-% Implemented using non-parallelized methods akin to the parallelized ones
-% introduced in the CMOS implementation:
-% A. Riaz, V. Bansal, A. Solomon, W. An, Q. Liu, K. Galligan, 
-% K. R. Duffy, M. Medard and R. T. Yazicigil, "Multi-code multi-rate 
-% universal maximum likelihood decoder using GRAND," Proceedings of 
-% IEEE ESSCIRC, 2021.
+%  GRAND (hard detection, BSC)
 
 % Inputs:
-%   code_class      - CRC, else assumed defined by matrix
 %   n               - code length
 %   H               - Parity check matrix or CRC function
 %   max_query       - Maximum number of code-book queries to abandonment
@@ -20,15 +12,16 @@
 %   n_guesses       - Number of guesses performed
 %   abandoned       - 1 if abandoned, 0 if found a codeword
 
-function [y_decoded,putative_noise,n_guesses,abandoned] = bin_GRAND(code_class,n,H,max_query,y_demod)
+function [y_decoded,putative_noise,n_guesses,abandoned] = bin_GRAND(H,max_query,y_demod)
 
+    n=size(H,2);
     n_guesses = 0;
     abandoned = 0;
     
     [err_loc_vec, err_vec, ~] = gen_next_err(n); %Generate initial vectors
 
     while n_guesses < max_query
-        [decoded,putative_noise,ng]=bin_syn_check(code_class,H,y_demod,err_vec);
+        [decoded,putative_noise,ng]=bin_syn_check(H,y_demod,err_vec);
         %How many guesses have been made
         n_guesses = n_guesses+ng;
         if (decoded == 1)
@@ -45,7 +38,7 @@ function [y_decoded,putative_noise,n_guesses,abandoned] = bin_GRAND(code_class,n
 
 end
 
-function [decoded,noise_found,n_guesses]=bin_syn_check(code_class,H,y_demod,err_vec)
+function [decoded,noise_found,n_guesses]=bin_syn_check(H,y_demod,err_vec)
 
     decoded = 0;
     noise_found = NaN(1,size(err_vec,2));
@@ -55,19 +48,10 @@ function [decoded,noise_found,n_guesses]=bin_syn_check(code_class,H,y_demod,err_
         % How much work have we done
         n_guesses=n_guesses+1;
         t = mod(y_demod-err_vec(n_guesses,:),2);
-        if isequal(code_class,'CRC')
-            [~,err] = H(t');
-            % If no error
-            if ~err
-                decoded = 1;
-                noise_found = err_vec(n_guesses,:);
-            end
-        else
-            if (mod(H*t',2) == zeros(size(H,1),1))
-                decoded = 1;
-                noise_found = err_vec(n_guesses,:);
-            end
-        end
+        if (mod(H*t',2) == zeros(size(H,1),1))
+            decoded = 1;
+            noise_found = err_vec(n_guesses,:);
+        end   
     end
 
 end
@@ -87,6 +71,7 @@ end
 
 function [err_loc_vec, err_vec, weight] = gen_next_err(n, err_loc_vec)
 
+
     mask_vec = 1:n;
     err_vec = zeros(1,n);
 
@@ -96,6 +81,7 @@ function [err_loc_vec, err_vec, weight] = gen_next_err(n, err_loc_vec)
         weight = 0;
         return;
     end
+
 
     %Get next error location vector
     err_loc_vec = increase_error(mask_vec, err_loc_vec);
@@ -108,9 +94,10 @@ function [err_loc_vec, err_vec, weight] = gen_next_err(n, err_loc_vec)
     weight = length(err_loc_vec);
     err_vec(err_loc_vec) = 1;
 
-end
 
-function err_loc_vec = increase_error(mask_vec, err_loc_vec)
+    end
+
+    function err_loc_vec = increase_error(mask_vec, err_loc_vec)
     %
     %Description: This function generates the next error location vector given the previous one
     %
