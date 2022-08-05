@@ -34,7 +34,7 @@ function z = landslide(W,w,n)
         % Evaluate drops
         d=circshift(u,-1)-u;
         d(w)=0;
-        % Evaluate acumuated drops
+        % Evaluate accumulated drops
         D = cumsum(d,'reverse');
     end
     z = z + repmat([1:w],size(z,1),1);
