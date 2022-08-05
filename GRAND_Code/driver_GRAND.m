@@ -47,7 +47,7 @@ err_thresh = 50;
 modlist = {'pi/2-BPSK','BPSK','QPSK','16QAM','64QAM','256QAM'}; 
 bpsList = [1 1 2 4 6 8];
 % Pick the modulation
-modulation = 'QPSK';
+modulation = 'BPSK';
 % Determine the number of bits per symbol in the modulation
 nmodbits = bpsList(strcmpi(modlist,modulation));
 
@@ -65,14 +65,13 @@ if isequal(code_class,'RLC')
     if exist(filename, 'file') == 2
         load(filename,'code');
         G=code.G;
-        H =[G(:,k+1:end)' eye(n-k)];
+        H=code.H;
     % If not, make a random generator
     else
         % Make a random parity check matrix
-        [G,~] = make_parity(k,n,0.5);
+        [G,H] = make_RLC(k,n,0.5);
         code.G=G;
-        % Parity check matrix of a systematic matrix
-        H =[G(:,k+1:end)' eye(n-k)];
+        code.H=H;
     end
 
 % Polar-assisted convolutional codes, as introduced by 
