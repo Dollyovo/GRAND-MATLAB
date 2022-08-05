@@ -43,11 +43,13 @@ ebn0=4:0.5:6;
 % Run simulation until this many errors observed for each Eb/N0 value
 err_thresh = 50;
 
-% Modulation scheme using MATLAB's toolbox:
-% pi/2-BPSK ,BPSK, QPSK, 16QAM, 64QAM, 256QAM.
-modulation = 'BPSK'; 
-% Number of bits per symbol in the modulation.
-nmodbits = 1;
+% Modulation schemes available using MATLAB's toolbox:
+modlist = {'pi/2-BPSK','BPSK','QPSK','16QAM','64QAM','256QAM'}; 
+bpsList = [1 1 2 4 6 8];
+% Pick the modulation
+modulation = 'QPSK';
+% Determine the number of bits per symbol in the modulation
+nmodbits = bpsList(strcmpi(modlist,modulation));
 
 % Pick the code
 % RLC, PAC, CAPOLAR, BCH or CRC. 
@@ -164,9 +166,6 @@ num_aband = num_decoded; % Number of abandoned decodings
 num_queries = num_decoded; % Total number of code-book queries
 
 for ii=1:length(snr_db)
-    
-    % To measure BLER, BER and average query number in real time
-    zz=0;
     
     % Noise variance
     sigma2 = 1/(10^(0.1*snr_db(ii))); 

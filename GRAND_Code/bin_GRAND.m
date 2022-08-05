@@ -87,7 +87,6 @@ end
 
 function [err_loc_vec, err_vec, weight] = gen_next_err(n, err_loc_vec)
 
-
     mask_vec = 1:n;
     err_vec = zeros(1,n);
 
@@ -97,7 +96,6 @@ function [err_loc_vec, err_vec, weight] = gen_next_err(n, err_loc_vec)
         weight = 0;
         return;
     end
-
 
     %Get next error location vector
     err_loc_vec = increase_error(mask_vec, err_loc_vec);
@@ -110,10 +108,9 @@ function [err_loc_vec, err_vec, weight] = gen_next_err(n, err_loc_vec)
     weight = length(err_loc_vec);
     err_vec(err_loc_vec) = 1;
 
+end
 
-    end
-
-    function err_loc_vec = increase_error(mask_vec, err_loc_vec)
+function err_loc_vec = increase_error(mask_vec, err_loc_vec)
     %
     %Description: This function generates the next error location vector given the previous one
     %
