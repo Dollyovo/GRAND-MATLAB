@@ -19,7 +19,7 @@ K. R. Duffy, J. Li, and M. Medard, "Capacity-achieving guessing random additive 
 
 A. Riaz, V. Bansal, A. Solomon, W. An, Q. Liu, K. Galligan, K. R. Duffy, M. Medard and R. T. Yazicigil, "Multi-code multi-rate universal maximum likelihood decoder using GRAND," Proceedings of IEEE ESSCIRC, 2021.
 
-K. R. Duffy, “Ordered reliability bits guessing random additive noise decoding," in IEEE ICASSP, 2021, pp. 8268–8272. 
+K. R. Duffy, “Ordered reliability bits guessing random additive noise decoding," Proceedings of IEEE ICASSP, 2021, pp. 8268–8272. 
 
 K. R. Duffy, W. An, and M. Medard, "Ordered reliability bits guessing random additive noise decoding,” arXiv:2202.13951, 2022.
 
