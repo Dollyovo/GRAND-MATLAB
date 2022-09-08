@@ -52,8 +52,6 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND(H,max_query,y_so
            inv_perm(ind_order(ii))=ii;    
     end
 
-    % This is the syndrome
-    Hy = mod(H*y_demod',2);
     % This is the H columns reordered to put in ML order
     test_H = H(:,ind_order);
      while n_guesses<max_query
@@ -80,7 +78,6 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND(H,max_query,y_so
             end
         end
      end
-
     % If we max out on queries.
     abandoned = 1;
     err_vec = zeros(size(y_demod));
