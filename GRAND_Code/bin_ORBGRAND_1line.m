@@ -75,11 +75,11 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(H,max_quer
     wt=c+1;
     while n_guesses<max_query && wt<=c*n+n*(n+1)/2
         % Hamming weight
-        w=1;
+        w=max(1,ceil((1+2*(n+c)-sqrt((1+2*(n+c))^2-8*wt))/2));
         while w<=n
             % Logistic weight
             W = wt-c*w;
-            if W<0 || W<w*(w+1)/2
+            if W<w*(w+1)/2
                 break;
             else
                 % Make error vectors
@@ -103,10 +103,8 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(H,max_quer
         end
         wt=wt+1;
     end
-
     % If we max out on queries or total weight
     abandoned = 1;
     err_vec = zeros(size(y_demod));
-
 end
 
