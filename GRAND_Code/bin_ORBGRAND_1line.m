@@ -67,8 +67,6 @@ function [y_decoded,err_vec,n_guesses,abandoned] = bin_ORBGRAND_1line(H,max_quer
     % Intercept
     c = max(round(L(1)/beta-1),0);
 
-    % This is the syndrome
-    Hy = mod(H*y_demod',2);
     % This is the H columns reordered to put in ML order
     test_H = H(:,ind_order);
     % Total starting weight
